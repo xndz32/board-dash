@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Links | Meus Botões</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            tech: {
+              950: '#07090e',
+              900: '#0d1117',
+              850: '#121824',
+              800: '#1a2234',
+              700: '#2a364f',
+            }
+          },
+          animation: {
+            'glow-pulse': 'glow 4s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            glow: {
+              '0%': { opacity: '0.3', transform: 'scale(1)' },
+              '100%': { opacity: '0.7', transform: 'scale(1.08)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07090e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1a2234;
+      border-radius: 3px;
+    }
+
+    /* Glassmorphism Styling */
+    .tech-card {
+      background: rgba(13, 17, 23, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .tech-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.15);
+    }
+
+    .add-card-dashed {
+      background: rgba(13, 17, 23, 0.4);
+      border: 2px dashed rgba(56, 189, 248, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    .add-card-dashed:hover {
+      border-color: rgba(56, 189, 248, 0.8);
+      background: rgba(18, 24, 36, 0.6);
+      box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.2);
+    }
+
+    .tech-modal {
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .bg-tech-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="bg-tech-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-black relative overflow-x-hidden bg-tech-grid">
+
+  <!-- Ambient Light Effects -->
+  <div class="fixed top-0 left-1/4 -translate-x-1/2 w-[500px] h-[300px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none animate-glow-pulse"></div>
+  <div class="fixed top-1/3 right-10 w-[400px] h-[400px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none animate-glow-pulse" style="animation-delay: 2s;"></div>
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 w-full bg-tech-950/80 backdrop-blur-md border-b border-slate-800/80 px-4 md:px-8 py-3.5 shadow-2xl">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      
+      <!-- Brand Title -->
+      <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-gradient-to-br from-cyan-500 to-indigo-600 rounded-lg shadow-lg shadow-cyan-500/20 text-black font-bold">
+            <i data-lucide="layout-grid" class="w-5 h-5 text-slate-950"></i>
+          </div>
+          <div>
+            <h1 id="headerTitleDisplay" class="font-mono font-bold text-base md:text-lg tracking-wider text-white uppercase">
+              PAINEL DE LINKS // MEUS BOTÕES
+            </h1>
+            <p id="headerSubtitleDisplay" class="text-xs text-slate-400 font-mono">Central Personalizada de Redirecionamento</p>
+          </div>
+        </div>
+
+        <!-- Mobile Create Button -->
+        <button onclick="openCreateButtonModal()" class="sm:hidden p-2 rounded-lg bg-cyan-500 text-slate-950 font-bold">
+          <i data-lucide="plus" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Action Toolbar -->
+      <div class="flex items-center space-x-2 w-full sm:w-auto justify-end overflow-x-auto pb-1 sm:pb-0">
+        
+        <!-- Main "+ Create Button" Header CTA -->
+        <button onclick="openCreateButtonModal()" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all duration-300 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 shadow-lg shadow-cyan-500/20 shrink-0">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>CRIE SEU BOTÃO</span>
+        </button>
+
+        <!-- Edit Header Info -->
+        <button onclick="openHeaderModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-300 hover:text-white bg-tech-850 hover:bg-tech-800 border border-slate-700/80 transition shrink-0" title="Editar Título do Painel">
+          <i data-lucide="type" class="w-3.5 h-3.5 text-indigo-400"></i>
+          <span class="hidden md:inline">Título</span>
+        </button>
+
+        <!-- Export JSON Save -->
+        <button onclick="exportSaveData()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-300 hover:text-white bg-tech-850 hover:bg-tech-800 border border-slate-700/80 transition shrink-0" title="Exportar Save (.JSON)">
+          <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span class="hidden md:inline">Exportar</span>
+        </button>
+
+        <!-- Import JSON Save -->
+        <label class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-300 hover:text-white bg-tech-850 hover:bg-tech-800 border border-slate-700/80 transition cursor-pointer shrink-0" title="Importar Save (.JSON)">
+          <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span class="hidden md:inline">Importar</span>
+          <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importSaveData(event)" />
+        </label>
+
+        <!-- Clear All Buttons -->
+        <button onclick="clearAllButtonsConfirm()" class="p-2 rounded-lg text-slate-400 hover:text-rose-400 bg-tech-850 hover:bg-tech-800 border border-slate-700/80 transition shrink-0" title="Limpar Todos os Botões">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION TOAST -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-2.5 px-4 py-3 rounded-xl tech-modal border-cyan-500/30 text-white shadow-2xl font-mono text-xs">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400" id="toastIcon"></i>
+    <span id="toastMsg">Ação concluída com sucesso!</span>
+  </div>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 md:px-8 py-8 flex flex-col">
+
+    <!-- SYSTEM STATUS BAR -->
+    <div class="mb-8 p-4 rounded-xl tech-card border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="relative flex h-2.5 w-2.5">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+        </span>
+        <span class="text-xs font-mono text-slate-300" id="buttonCounter">0 BOTÕES CRIADOS</span>
+      </div>
+      <div class="flex items-center space-x-6 text-xs font-mono text-slate-500">
+        <span class="hidden sm:inline"><strong class="text-slate-400">AUTO-SAVE:</strong> LOCALSTORAGE</span>
+        <span><strong class="text-slate-400">STATUS:</strong> PRONTO</span>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE HERO (ONLY SHOWN WHEN ZERO BUTTONS EXIST) -->
+    <div id="emptyStateContainer" class="my-auto py-12 px-4 flex flex-col items-center justify-center text-center">
+      <div class="p-5 rounded-2xl bg-tech-900/80 border border-cyan-500/20 text-cyan-400 mb-5 shadow-2xl shadow-cyan-500/10">
+        <i data-lucide="plus-circle" class="w-12 h-12"></i>
+      </div>
+      <h2 class="text-xl md:text-2xl font-mono font-bold text-white mb-2 uppercase tracking-wide">
+        Sua Central de Links Está Vazia
+      </h2>
+      <p class="text-sm text-slate-400 max-w-md mb-8 font-sans">
+        Comece criando seus botões de redirecionamento personalizados. Adicione links, fotos ou ícones, títulos e cores customizadas.
+      </p>
+      
+      <button onclick="openCreateButtonModal()" class="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-mono font-bold text-base shadow-xl shadow-cyan-500/25 transition-all duration-300 hover:scale-105 flex items-center space-x-3">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+        <span>CRIE SEU BOTÃO</span>
+      </button>
+    </div>
+
+    <!-- BUTTONS GRID CONTAINER -->
+    <div id="buttonsGridContainer" class="hidden">
+      <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-2">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-2 h-2 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400"></div>
+          <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+            SEUS BOTÕES DE REDIRECIONAMENTO
+          </h2>
+        </div>
+      </div>
+      
+      <!-- Dynamic Buttons Grid -->
+      <div id="buttonsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="py-5 border-t border-slate-800/60 text-center text-xs font-mono text-slate-600 bg-tech-950/80 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>PAINEL DE LINKS // MEUS BOTÕES</p>
+      <p class="text-[11px]">SALVAMENTO AUTOMÁTICO EM LOCALSTORAGE</p>
+    </div>
+  </footer>
+
+
+  <!-- ==================== CREATE / EDIT BUTTON MODAL ==================== -->
+  <div id="buttonModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+    <div class="tech-modal w-full max-w-xl rounded-2xl p-6 shadow-2xl relative my-8 border border-slate-800 transform transition-all">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+        <div class="flex items-center space-x-2.5">
+          <div class="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/20 text-cyan-400">
+            <i data-lucide="link-2" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-base font-mono font-bold text-white uppercase tracking-wider" id="modalTitle">CRIAR NOVO BOTÃO</h3>
+        </div>
+        <button onclick="closeButtonModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-tech-850 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Form Edit -->
+      <form id="buttonForm" onsubmit="saveButtonForm(event)" class="space-y-4 font-mono text-xs">
+        <input type="hidden" id="editButtonId" value="" />
+
+        <!-- Title -->
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">NOME / TÍTULO DO BOTÃO *</label>
+          <input type="text" id="inputBtnTitle" required class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500" placeholder="Ex: Meu Servidor Discord" />
+        </div>
+
+        <!-- Target URL -->
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">LINK DE REDIRECIONAMENTO (URL) *</label>
+          <input type="url" id="inputBtnUrl" required class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500" placeholder="https://exemplo.com" />
+        </div>
+
+        <!-- Description / Subtitle -->
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">DESCRIÇÃO / SUBTÍTULO (OPCIONAL)</label>
+          <input type="text" id="inputBtnSub" class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500" placeholder="Ex: Comunidade oficial do projeto" />
+        </div>
+
+        <!-- Photo / Icon Config -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="md:col-span-2">
+            <label class="block text-slate-300 font-semibold mb-1">FOTO OU ÍCONE (OPCIONAL)</label>
+            <input type="text" id="inputBtnIcon" class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500" placeholder="URL da Foto ou Ícone Lucide (ex: globe, zap, link)" />
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">TIPO DE MÍDIA</label>
+            <select id="inputBtnIconType" class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500">
+              <option value="image">URL da Foto</option>
+              <option value="lucide">Nome do Ícone</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Target Window Option -->
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">ABRIR LINK EM</label>
+          <select id="inputBtnTarget" class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500">
+            <option value="_blank">Nova Aba (_blank)</option>
+            <option value="_self">Mesma Aba (_self)</option>
+          </select>
+        </div>
+
+        <!-- Background Presets -->
+        <div>
+          <label class="block text-slate-300 font-semibold mb-2">COR DE FUNDO / ESTILO DE GRADIENTE</label>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-2">
+            <button type="button" onclick="setGradientPreset('from-cyan-900/60 to-blue-950/80')" class="h-8 rounded-lg bg-gradient-to-r from-cyan-900/60 to-blue-950/80 border border-cyan-500/40 hover:scale-105 transition" title="Cyan Tech"></button>
+            <button type="button" onclick="setGradientPreset('from-indigo-900/60 to-purple-950/80')" class="h-8 rounded-lg bg-gradient-to-r from-indigo-900/60 to-purple-950/80 border border-indigo-500/40 hover:scale-105 transition" title="Purple Neon"></button>
+            <button type="button" onclick="setGradientPreset('from-emerald-900/60 to-teal-950/80')" class="h-8 rounded-lg bg-gradient-to-r from-emerald-900/60 to-teal-950/80 border border-emerald-500/40 hover:scale-105 transition" title="Emerald Matrix"></button>
+            <button type="button" onclick="setGradientPreset('from-rose-900/60 to-slate-950/80')" class="h-8 rounded-lg bg-gradient-to-r from-rose-900/60 to-slate-950/80 border border-rose-500/40 hover:scale-105 transition" title="Rose Cyber"></button>
+            <button type="button" onclick="setGradientPreset('from-amber-900/60 to-slate-950/80')" class="h-8 rounded-lg bg-gradient-to-r from-amber-900/60 to-slate-950/80 border border-amber-500/40 hover:scale-105 transition" title="Amber Flare"></button>
+            <button type="button" onclick="setGradientPreset('from-tech-900 to-tech-850')" class="h-8 rounded-lg bg-gradient-to-r from-tech-900 to-tech-850 border border-slate-700 hover:scale-105 transition" title="Dark Minimal"></button>
+          </div>
+          <input type="text" id="inputBtnBgClass" class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2 text-[11px] text-slate-300 focus:outline-none" placeholder="Classe Tailwind de fundo" />
+        </div>
+
+        <!-- Text & Border Colors -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">COR DO TEXTO</label>
+            <input type="text" id="inputBtnTextColor" class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2 text-[11px] text-white" placeholder="text-white" />
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">COR DA BORDA</label>
+            <input type="text" id="inputBtnBorderColor" class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2 text-[11px] text-white" placeholder="border-cyan-500/30" />
+          </div>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="pt-2">
+          <label class="block text-slate-400 font-semibold mb-1">PRÉ-VISUALIZAÇÃO:</label>
+          <div id="btnPreviewContainer" class="p-3 bg-tech-950 rounded-xl border border-slate-800 flex justify-center">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Submit Controls -->
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+          <button type="button" onclick="closeButtonModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:bg-tech-850 transition">Cancelar</button>
+          <button type="submit" id="submitBtnText" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold shadow-lg shadow-cyan-500/20 transition">SALVAR BOTÃO</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- MODAL DE EDIÇÃO DO TÍTULO DO PAINEL -->
+  <div id="headerModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="tech-modal w-full max-w-lg rounded-2xl p-6 shadow-2xl relative border border-slate-800">
+      
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+          <div class="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
+            <i data-lucide="type" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-base font-mono font-bold text-white uppercase tracking-wider">EDITAR TÍTULO DO PAINEL</h3>
+        </div>
+        <button onclick="closeHeaderModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-tech-850 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="headerForm" onsubmit="saveHeaderChanges(event)" class="space-y-4 font-mono text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">TÍTULO PRINCIPAL *</label>
+          <input type="text" id="inputHeaderTitle" required class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500" />
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">SUBTÍTULO / DESCRIÇÃO DO PAINEL</label>
+          <input type="text" id="inputHeaderSub" class="w-full bg-tech-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500" />
+        </div>
+
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+          <button type="button" onclick="closeHeaderModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:bg-tech-850 transition">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-slate-950 font-bold shadow-lg transition">SALVAR TÍTULO</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    // DADOS INICIAIS VAZIOS POR PADRÃO
+    const emptyDefaultData = {
+      header: {
+        title: "PAINEL DE LINKS // MEUS BOTÕES",
+        subtitle: "Central Personalizada de Redirecionamento"
+      },
+      buttons: [] // Inicia totalmente sem botões
+    };
+
+    // GLOBAL STATE
+    let appData = JSON.parse(JSON.stringify(emptyDefaultData));
+    const STORAGE_KEY = 'my_custom_button_hub_v1';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDataFromStorage();
+      renderAll();
+      setupLivePreviewListeners();
+    });
+
+    // LOCALSTORAGE READ
+    function loadDataFromStorage() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.header && Array.isArray(parsed.buttons)) {
+            appData = parsed;
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao ler localStorage:", err);
+      }
+    }
+
+    // LOCALSTORAGE SAVE
+    function saveDataToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (err) {
+        console.error("Erro ao salvar localStorage:", err);
+      }
+    }
+
+    // RENDER MAIN APPLICATION
+    function renderAll() {
+      // Header Info
+      document.getElementById('headerTitleDisplay').textContent = appData.header.title || "PAINEL DE LINKS // MEUS BOTÕES";
+      document.getElementById('headerSubtitleDisplay').textContent = appData.header.subtitle || "Central Personalizada de Redirecionamento";
+
+      const totalButtons = appData.buttons.length;
+      document.getElementById('buttonCounter').textContent = `${totalButtons} ${totalButtons === 1 ? 'BOTÃO CRIADO' : 'BOTÕES CRIADOS'}`;
+
+      const emptyContainer = document.getElementById('emptyStateContainer');
+      const gridContainer = document.getElementById('buttonsGridContainer');
+      const grid = document.getElementById('buttonsGrid');
+
+      if (totalButtons === 0) {
+        emptyContainer.classList.remove('hidden');
+        gridContainer.classList.add('hidden');
+      } else {
+        emptyContainer.classList.add('hidden');
+        gridContainer.classList.remove('hidden');
+
+        grid.innerHTML = '';
+
+        // Render created buttons
+        appData.buttons.forEach((btn, index) => {
+          grid.innerHTML += createButtonCardHTML(btn, index);
+        });
+
+        // ALWAYS RENDER "+ CRIAR SEU BOTÃO" CARD AT THE END OF THE GRID
+        grid.innerHTML += `
+          <div onclick="openCreateButtonModal()" class="add-card-dashed cursor-pointer relative flex flex-col items-center justify-center p-4 rounded-xl min-h-[115px] w-full transition-all duration-300 group">
+            <div class="p-2 bg-cyan-500/10 rounded-full border border-cyan-500/30 text-cyan-400 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300 mb-2">
+              <i data-lucide="plus" class="w-6 h-6"></i>
+            </div>
+            <span class="font-mono font-bold text-xs text-cyan-400 tracking-wider group-hover:text-cyan-300 uppercase">+ Criar Seu Botão</span>
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
+    // HTML DE CADA CARD DE BOTÃO
+    function createButtonCardHTML(btn, index) {
+      const bgStyle = btn.bgClass && btn.bgClass.includes('from-') ? `bg-gradient-to-br ${btn.bgClass}` : (btn.bgClass || 'from-cyan-900/60 to-blue-950/80');
+      
+      let iconHTML = '';
+      if (btn.iconType === 'image' && btn.icon) {
+        iconHTML = `<img src="${btn.icon}" alt="Foto" class="w-6 h-6 object-cover rounded-md" onerror="this.src='https://placehold.co/40x40/0d1117/ffffff?text=Foto'" />`;
+      } else {
+        const iconName = btn.icon || 'link-2';
+        iconHTML = `<i data-lucide="${iconName}" class="w-5 h-5"></i>`;
+      }
+
+      const targetAttr = btn.target || '_blank';
+
+      return `
+        <div class="relative group">
+          <a href="${btn.url}" 
+             target="${targetAttr}" 
+             rel="noopener noreferrer"
+             class="tech-card relative flex flex-col justify-between p-4 rounded-xl ${bgStyle} ${btn.textColor || 'text-white'} ${btn.borderColor || 'border-cyan-500/30'} border shadow-lg transform transition-all duration-300 hover:-translate-y-1 min-h-[115px] w-full block overflow-hidden">
+            
+            <div class="flex items-center justify-between space-x-2 mb-3">
+              <div class="p-2 bg-black/40 backdrop-blur-md rounded-lg border border-white/10 flex items-center justify-center shrink-0">
+                ${iconHTML}
+              </div>
+
+              <!-- Action Controls (Edit / Delete / Duplicate) -->
+              <div class="flex items-center space-x-1" onclick="event.stopPropagation(); event.preventDefault();">
+                <button onclick="duplicateButton(${index})" class="p-1.5 bg-black/50 hover:bg-tech-800 text-slate-300 hover:text-cyan-400 rounded-lg border border-white/5 transition" title="Duplicar">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="openEditButtonModal(${index})" class="p-1.5 bg-black/50 hover:bg-tech-800 text-slate-300 hover:text-cyan-400 rounded-lg border border-white/5 transition" title="Editar">
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteButton(${index})" class="p-1.5 bg-black/50 hover:bg-rose-950 text-slate-300 hover:text-rose-400 rounded-lg border border-white/5 transition" title="Excluir">
+                  <i data-lucide="trash" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-mono font-bold text-xs sm:text-sm tracking-tight line-clamp-1 uppercase">${btn.title}</h3>
+              ${btn.subtitle ? `<p class="text-[11px] font-mono opacity-70 line-clamp-1 mt-0.5">${btn.subtitle}</p>` : ''}
+            </div>
+
+          </a>
+        </div>
+      `;
+    }
+
+    // MODAL DE CRIAÇÃO / EDIÇÃO DE BOTÃO
+    function openCreateButtonModal() {
+      document.getElementById('editButtonId').value = '';
+      document.getElementById('modalTitle').textContent = 'CRIE SEU BOTÃO';
+      document.getElementById('submitBtnText').textContent = 'CRIAR BOTÃO';
+
+      document.getElementById('inputBtnTitle').value = '';
+      document.getElementById('inputBtnUrl').value = '';
+      document.getElementById('inputBtnSub').value = '';
+      document.getElementById('inputBtnIcon').value = '';
+      document.getElementById('inputBtnIconType').value = 'image';
+      document.getElementById('inputBtnTarget').value = '_blank';
+      document.getElementById('inputBtnBgClass').value = 'from-cyan-900/60 to-blue-950/80';
+      document.getElementById('inputBtnTextColor').value = 'text-white';
+      document.getElementById('inputBtnBorderColor').value = 'border-cyan-500/30';
+
+      updateModalPreview();
+      document.getElementById('buttonModal').classList.remove('hidden');
+    }
+
+    function openEditButtonModal(index) {
+      const btn = appData.buttons[index];
+      if (!btn) return;
+
+      document.getElementById('editButtonId').value = index;
+      document.getElementById('modalTitle').textContent = `EDITAR BOTÃO #${index + 1}`;
+      document.getElementById('submitBtnText').textContent = 'SALVAR ALTERAÇÕES';
+
+      document.getElementById('inputBtnTitle').value = btn.title || '';
+      document.getElementById('inputBtnUrl').value = btn.url || '';
+      document.getElementById('inputBtnSub').value = btn.subtitle || '';
+      document.getElementById('inputBtnIcon').value = btn.icon || '';
+      document.getElementById('inputBtnIconType').value = btn.iconType || 'image';
+      document.getElementById('inputBtnTarget').value = btn.target || '_blank';
+      document.getElementById('inputBtnBgClass').value = btn.bgClass || 'from-cyan-900/60 to-blue-950/80';
+      document.getElementById('inputBtnTextColor').value = btn.textColor || 'text-white';
+      document.getElementById('inputBtnBorderColor').value = btn.borderColor || 'border-cyan-500/30';
+
+      updateModalPreview();
+      document.getElementById('buttonModal').classList.remove('hidden');
+    }
+
+    function closeButtonModal() {
+      document.getElementById('buttonModal').classList.add('hidden');
+    }
+
+    function setGradientPreset(presetClass) {
+      document.getElementById('inputBtnBgClass').value = presetClass;
+      updateModalPreview();
+    }
+
+    function saveButtonForm(e) {
+      e.preventDefault();
+      const idVal = document.getElementById('editButtonId').value;
+
+      const newBtn = {
+        title: document.getElementById('inputBtnTitle').value,
+        url: document.getElementById('inputBtnUrl').value,
+        subtitle: document.getElementById('inputBtnSub').value,
+        icon: document.getElementById('inputBtnIcon').value,
+        iconType: document.getElementById('inputBtnIconType').value,
+        target: document.getElementById('inputBtnTarget').value,
+        bgClass: document.getElementById('inputBtnBgClass').value,
+        textColor: document.getElementById('inputBtnTextColor').value,
+        borderColor: document.getElementById('inputBtnBorderColor').value,
+      };
+
+      if (idVal !== '') {
+        const index = parseInt(idVal, 10);
+        appData.buttons[index] = newBtn;
+        showToast("Botão atualizado com sucesso!");
+      } else {
+        appData.buttons.push(newBtn);
+        showToast("Novo botão criado!");
+      }
+
+      saveDataToStorage();
+      renderAll();
+      closeButtonModal();
+    }
+
+    function deleteButton(index) {
+      if (confirm(`Excluir o botão "${appData.buttons[index].title}"?`)) {
+        appData.buttons.splice(index, 1);
+        saveDataToStorage();
+        renderAll();
+        showToast("Botão removido.");
+      }
+    }
+
+    function duplicateButton(index) {
+      const cloned = JSON.parse(JSON.stringify(appData.buttons[index]));
+      cloned.title += " (Cópia)";
+      appData.buttons.splice(index + 1, 0, cloned);
+      saveDataToStorage();
+      renderAll();
+      showToast("Botão duplicado!");
+    }
+
+    function setupLivePreviewListeners() {
+      const inputs = ['inputBtnTitle', 'inputBtnSub', 'inputBtnIcon', 'inputBtnIconType', 'inputBtnBgClass', 'inputBtnTextColor', 'inputBtnBorderColor'];
+      inputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', updateModalPreview);
+      });
+    }
+
+    function updateModalPreview() {
+      const title = document.getElementById('inputBtnTitle').value || 'NOME DO BOTÃO';
+      const sub = document.getElementById('inputBtnSub').value || '';
+      const icon = document.getElementById('inputBtnIcon').value || '';
+      const iconType = document.getElementById('inputBtnIconType').value;
+      const bgClass = document.getElementById('inputBtnBgClass').value || 'from-cyan-900/60 to-blue-950/80';
+      const textColor = document.getElementById('inputBtnTextColor').value || 'text-white';
+      const borderColor = document.getElementById('inputBtnBorderColor').value || 'border-cyan-500/30';
+
+      const bgStyle = bgClass.includes('from-') ? `bg-gradient-to-br ${bgClass}` : bgClass;
+      let iconHTML = iconType === 'image' && icon ? 
+        `<img src="${icon}" class="w-6 h-6 object-cover rounded" onerror="this.src='https://placehold.co/40x40/0d1117/ffffff?text=Foto'" />` : 
+        `<i data-lucide="${icon || 'link-2'}" class="w-5 h-5"></i>`;
+
+      document.getElementById('btnPreviewContainer').innerHTML = `
+        <div class="w-full max-w-xs">
+          <div class="p-3 rounded-xl ${bgStyle} ${textColor} ${borderColor} border shadow-lg font-mono flex flex-col justify-between min-h-[95px]">
+            <div class="flex items-center space-x-2.5 mb-2">
+              <div class="p-1.5 bg-black/40 rounded border border-white/10">
+                ${iconHTML}
+              </div>
+              <div>
+                <h4 class="font-bold text-xs uppercase">${title}</h4>
+                ${sub ? `<p class="text-[10px] opacity-70">${sub}</p>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // HEADER EDIT MODAL
+    function openHeaderModal() {
+      document.getElementById('inputHeaderTitle').value = appData.header.title || '';
+      document.getElementById('inputHeaderSub').value = appData.header.subtitle || '';
+      document.getElementById('headerModal').classList.remove('hidden');
+    }
+
+    function closeHeaderModal() {
+      document.getElementById('headerModal').classList.add('hidden');
+    }
+
+    function saveHeaderChanges(e) {
+      e.preventDefault();
+      appData.header.title = document.getElementById('inputHeaderTitle').value;
+      appData.header.subtitle = document.getElementById('inputHeaderSub').value;
+
+      saveDataToStorage();
+      renderAll();
+      closeHeaderModal();
+      showToast("Título do painel atualizado!");
+    }
+
+    // SAVE FILE IMPORT & EXPORT
+    function exportSaveData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `meus_botoes_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      showToast("Backup baixado com sucesso!");
+    }
+
+    function importSaveData(event) {
+      const fileReader = new FileReader();
+      fileReader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (importedData && importedData.header && Array.isArray(importedData.buttons)) {
+            appData = importedData;
+            saveDataToStorage();
+            renderAll();
+            showToast("Backup carregado com sucesso!");
+          } else {
+            alert("Arquivo de backup inválido.");
+          }
+        } catch (err) {
+          alert("Erro ao ler o arquivo JSON de backup.");
+        }
+      };
+      if (event.target.files[0]) {
+        fileReader.readAsText(event.target.files[0]);
+      }
+    }
+
+    function clearAllButtonsConfirm() {
+      if (appData.buttons.length === 0) {
+        showToast("O painel já está vazio.");
+        return;
+      }
+      if (confirm("Tem certeza que deseja apagar TODOS os seus botões?")) {
+        appData.buttons = [];
+        saveDataToStorage();
+        renderAll();
+        showToast("Todos os botões foram apagados.");
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = message;
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
